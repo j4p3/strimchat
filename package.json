@@ -1,0 +1,23 @@
+{
+  "name": "strimchat",
+  "version": "0.0.1",
+  "description": "chat backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "babel-node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/webpack/bin/webpack.js -p"
+  },
+  "author": "JP",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^4.3.0",
+    "webpack-cli": "^2.0.13"
+  },
+  "dependencies": {
+    "ws": "^5.1.0"
+  }
+}
