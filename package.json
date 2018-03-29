@@ -4,9 +4,11 @@
   "description": "chat backend",
   "main": "src/index.js",
   "scripts": {
-    "start": "babel-node index.js",
+    "babel-node": "babel-node --presets=env",
+    "start": "nodemon --exec npx babel-node -- --inspect ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./node_modules/webpack/bin/webpack.js -p"
+    "build": "./node_modules/webpack/bin/webpack.js -p",
+    "run": "node ./dist/main.js"
   },
   "author": "JP",
   "license": "MIT",
@@ -14,10 +16,18 @@
     "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
+    "nodemon": "^1.17.2",
     "webpack": "^4.3.0",
     "webpack-cli": "^2.0.13"
   },
   "dependencies": {
     "ws": "^5.1.0"
+  },
+  "babel": {
+    "presets": [ "env", {
+      "targets": {
+        "node": "9.5.0"
+      }
+    }]
   }
 }
