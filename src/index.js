@@ -1,38 +1,28 @@
-// ****************************************************************************
-// Message Schema
-// ****************************************************************************
-// {
-//   timestamp: int64
-//   author: string
-//   content: string
-//   meta: {
-//     echos: int
-//   }
-// }
-
 const WebSocket = require('ws');
+
+import Message from './message';
+
 const port = 8082;
 const wss = new WebSocket.Server({ port: port });
 
 // Broken connection handling
 
 const noop = () => {}
-const pulse = () => { this.isAlive = true; }
 const refreshClients = () => {
-  wss.clients.forEach((client) => {
+  wss.clients.forEach((ws) => {
     if (ws.isAlive == false) return ws.terminate();
     ws.isAlive = false;
     ws.ping(noop);
-  })
+  });
 }
 const expireSchedule = setInterval(refreshClients, 30000);
 
 // Broadcasting
 
-const broadcast = (data, authorClient = undefined) => {
-  wss.clients.forEach((client) => {
-    if (client !== authorClient && client.readyState == WebSocket.OPEN) {
-      client.send(data)
+const broadcast = (message, author = undefined) => {
+  wss.clients.forEach((ws) => {
+    if (ws !== author && ws.readyState == WebSocket.OPEN) {
+      ws.send(JSON.stringify(message))
     }
   })
 }
@@ -41,10 +31,28 @@ const broadcast = (data, authorClient = undefined) => {
 
 wss.on('connection', (ws) => {
   ws.isAlive = true;
-  ws.on('pong', pulse);
+  ws.on('pong', () => { ws.isAlive = true; });
 
-  ws.on('message', (message) => {
-    console.log('chat: received message');
-    broadcast(message, ws);
+  ws.on('message', (data) => {
+    console.log('chat: message received');
+    try {
+
+      // @todo: multiple message types including "echo" of previous message
+      const dataObject = JSON.parse(data);
+      let message = new Message(dataObject)
+      broadcast(message, ws)
+
+    } catch (e) {
+      // @todo: formalize system messages
+      console.log(e);
+      if (e.hasOwnProperty('code') && e.code == 0) {
+        ws.send('Error: invalid message format.');
+        return;
+      }
+      if (e instanceof SyntaxError) {
+        ws.send('Error: invalid message format.');
+        return;
+      }
+    }
   })
 });
