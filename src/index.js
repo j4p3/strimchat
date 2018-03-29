@@ -5,7 +5,8 @@ import Message from './message';
 const port = 8082;
 const wss = new WebSocket.Server({ port: port });
 
-// Broken connection handling
+// 
+// Broken connections
 
 const noop = () => {}
 const refreshClients = () => {
@@ -17,6 +18,22 @@ const refreshClients = () => {
 }
 const expireSchedule = setInterval(refreshClients, 30000);
 
+// 
+// Error handling
+
+const handleError = (e, ws) => {
+  // @todo: formalize system messages
+  if (e.hasOwnProperty('code') && e.code == 0) {
+    ws.send('Error: invalid message format.');
+    return;
+  }
+  if (e instanceof SyntaxError) {
+    ws.send('Error: invalid message format.');
+    return;
+  }
+}
+
+// 
 // Broadcasting
 
 const broadcast = (message, author = undefined) => {
@@ -27,32 +44,28 @@ const broadcast = (message, author = undefined) => {
   })
 }
 
-// Connection handling
+// 
+// Connection lifecycle
+const listen = (ws) => {
 
-wss.on('connection', (ws) => {
   ws.isAlive = true;
   ws.on('pong', () => { ws.isAlive = true; });
 
-  ws.on('message', (data) => {
-    console.log('chat: message received');
+  const receive = (data) => {
     try {
-
       // @todo: multiple message types including "echo" of previous message
       const dataObject = JSON.parse(data);
       let message = new Message(dataObject)
+
+      // @todo: trigger broadcast from redis pubsub update listener?
       broadcast(message, ws)
 
     } catch (e) {
-      // @todo: formalize system messages
-      console.log(e);
-      if (e.hasOwnProperty('code') && e.code == 0) {
-        ws.send('Error: invalid message format.');
-        return;
-      }
-      if (e instanceof SyntaxError) {
-        ws.send('Error: invalid message format.');
-        return;
-      }
+      handleError(e, ws);
     }
-  })
-});
+  }
+
+  ws.on('message', (data) => receive(data));
+}
+
+wss.on('connection', (ws) => listen(ws));

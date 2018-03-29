@@ -23,7 +23,6 @@ export default class Message {
   }
 
   constructor(props) {
-    console.log(props)
     if (typeof props !== 'object') return Message.malformedError('not object');
     Message.requiredMembers().forEach((key) => {
       if (!(key in props)) return Message.malformedError('wrong props');
