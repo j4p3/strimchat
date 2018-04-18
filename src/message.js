@@ -5,14 +5,14 @@
 //   timestamp: int64
 //   author: string
 //   content: string
-//   meta: {
-//     echos: int       (to be used for 'echo' functionality)
-//   }
+//   echoes: int
 // }
+
+import { Message as MessageModel } from './db';
 
 export default class Message {
   static requiredMembers() {
-    return ['author', 'content'];
+    return ['author', 'userId', 'content'];
   }
 
   static malformedError(context) {
@@ -29,5 +29,14 @@ export default class Message {
       this[key] = props[key];
     });
     this.timestamp = Date.now();
+  }
+
+  save() {
+    this.record = MessageModel.create({
+      author: this.author,
+      user_id: this.userId,
+      content: this.content,
+      echoes: 0,
+    });
   }
 }

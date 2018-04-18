@@ -1,3 +1,11 @@
+// ========================================================================= //
+// 
+// Webserver for:
+//  chat application
+// 
+// ========================================================================= //
+
+
 const WebSocket = require('ws');
 
 import Message from './message';
@@ -7,6 +15,7 @@ const wss = new WebSocket.Server({ port: port });
 
 // 
 // Broken connections
+// 
 
 const noop = () => {}
 const refreshClients = () => {
@@ -20,6 +29,7 @@ const expireSchedule = setInterval(refreshClients, 30000);
 
 // 
 // Error handling
+// 
 
 const handleError = (e, ws) => {
   // @todo: formalize system messages
@@ -35,6 +45,7 @@ const handleError = (e, ws) => {
 
 // 
 // Broadcasting
+// 
 
 const broadcast = (message, author = undefined) => {
   wss.clients.forEach((ws) => {
@@ -46,6 +57,8 @@ const broadcast = (message, author = undefined) => {
 
 // 
 // Connection lifecycle
+// 
+
 const listen = (ws) => {
 
   ws.isAlive = true;
@@ -57,8 +70,8 @@ const listen = (ws) => {
       const dataObject = JSON.parse(data);
       let message = new Message(dataObject)
 
-      // @todo: trigger broadcast from redis pubsub update listener?
       broadcast(message, ws)
+      message.save();
 
     } catch (e) {
       handleError(e, ws);
