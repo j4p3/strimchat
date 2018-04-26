@@ -4,35 +4,26 @@
   "description": "chat backend",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon --exec 'node --require dotenv/config --require babel-register ./src/index.js'",
+    "start": "nodemon --exec 'node --require dotenv/config --require babel-register --inspect=9230 ./src/index.js'",
     "sync": "node --require 'dotenv/config' --require 'babel-register' ./src/sync.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./node_modules/webpack/bin/webpack.js -p",
-    "server": "node ./dist/main.js"
+    "serve": "node --require 'dotenv/config' ./dist/main.js"
   },
   "author": "JP",
   "license": "MIT",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "nodemon": "^1.17.2"
+  },
+  "dependencies": {
+    "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
     "dotenv": "^5.0.1",
-    "nodemon": "^1.17.2",
-    "webpack": "^4.3.0",
-    "webpack-cli": "^2.0.13"
-  },
-  "dependencies": {
     "pg": "^7.4.1",
     "sequelize": "^4.37.6",
+    "webpack": "^4.3.0",
+    "webpack-cli": "^2.0.13",
     "ws": "^5.1.0"
-  },
-  "babel": {
-    "presets": [
-      ["@babel/preset-env", {
-        "targets": {
-          "node": "current"
-        }
-      }]
-    ]
   }
 }

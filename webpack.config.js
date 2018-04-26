@@ -1,7 +1,5 @@
 'use strict';
 
-const fs = require('fs');
-
 module.exports = {
   target: 'node',
   entry: {
@@ -16,19 +14,11 @@ module.exports = {
         test: /\.js$/,
         exclude: /(node_modules)/,
         loader: 'babel-loader',
-        query: {
+        options: {
           presets: ['env']
-        }
-      }, {
-        test: /\.(jpe?g|png|gif|svg)$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-          }
         }
       }
     ]
   },
-  plugins: []
+  externals: ['sqlite3', 'tedious', 'pg-hstore']
 };

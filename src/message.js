@@ -32,6 +32,7 @@ export default class Message {
   }
 
   save() {
+    // @todo push saves into some kind of queue? worried about overwhelming db with writes
     this.record = MessageModel.create({
       author: this.author,
       user_id: this.userId,

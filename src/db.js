@@ -12,7 +12,7 @@ const User = db.define('user');
 
 const Message = db.define('message', {
   author: Sequelize.STRING,
-  content: Sequelize.STRING,
+  content: Sequelize.TEXT,
   echoes: Sequelize.INTEGER,
   user_id: {
     type: Sequelize.INTEGER,
