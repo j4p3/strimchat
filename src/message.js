@@ -4,6 +4,7 @@
 // {
 //   timestamp: int64
 //   author: string
+//   user_id: string
 //   content: string
 //   echoes: int
 // }

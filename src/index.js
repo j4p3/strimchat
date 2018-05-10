@@ -10,8 +10,10 @@ const WebSocket = require('ws');
 
 import Message from './message';
 
-const port = 8082;
-const wss = new WebSocket.Server({ port: port });
+const PORT = process.env.STRIMCHAT_PORT;
+const wss = new WebSocket.Server({ port: PORT });
+
+console.log('chat: listening on port ' + PORT);
 
 // 
 // Broken connections
